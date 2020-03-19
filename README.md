@@ -17,13 +17,13 @@ go get github.com/nehsus/glark
 
  * Obtain the [API access token](https://open.larksuite.com/document/uMzMyEjLzMjMx4yMzITM/ukjMyEjL5IjMx4SOyITM) from Lark
 
- * Obtain a new bearertoken from Lark with the application credentials
+ * Obtain a new bearertoken from Lark with the application credentials \
 Request method: POST \
 Request address: https://open.larksuite.com/open-apis/auth/v3/app_access_token/internal \
 Request header: \
 key	value \
 Content-Type	application/json \
-Request example: \
+Request example: 
 ```json
 { 
     "app_id": "supersecretid", 
@@ -38,14 +38,14 @@ Request example: \
     - app_secret
     - chat_id
 
- * Invoke the message sending API:
+ * Invoke the message sending API: \
 Request method: POST \
 Request address: https://open.larksuite.com/open-apis/message/v4/send/ \
 Request header: \
 key	value \
 Authorization	Bearer tenant_access_token \
 Content-Type	application/json \
-Request example: \
+Request example:
 ```json
 {
    "chat_id":"oc_xxx", 
@@ -57,7 +57,7 @@ Request example: \
 }
 ```
 
-## Limitations
+## Pending Features
 This project is currently under construction. Issues presently being worked on:
  
  * Only one bot and chat-group is implemented
