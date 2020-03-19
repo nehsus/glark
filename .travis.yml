@@ -1,11 +1,9 @@
 --- 
 dist: bionic
-env: "GO111MODULE=on GOFLAGS='-mod vendor'"
 git: 
   depth: 1
 go: 
-  - 1.13.x
-install: "true - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $GOPATH/bin v1.23.1"
+  - 1.13
 language: go
 script: 
   - "go build"
