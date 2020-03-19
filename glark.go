@@ -33,6 +33,27 @@ type LarkToken struct {
 	TenantAccessToken string `json:"tenant_access_token"`
 }
 
+type LarkData struct {
+	Code int    `json:"code"`
+	Data Data   `json:"data"`
+	Msg  string `json:"msg"`
+}
+
+type Data struct {
+	Groups    []Groups `json:"groups"`
+	HasMore   bool     `json:"has_more"`
+	PageToken string   `json:"page_token"`
+}
+
+type Groups struct {
+	Avatar      string `json:"avatar"`
+	ChatID      string `json:"chat_id"`
+	Description string `json:"description"`
+	Name        string `json:"name"`
+	OwnerOpenID string `json:"owner_open_id"`
+	OwnerUserID string `json:"owner_user_id"`
+}
+
 // Payload is a struct to store details from Grafana
 type Payload struct {
 	DashboardID int           `json:"dashboardId"`
@@ -48,11 +69,13 @@ type Payload struct {
 	Tags        Tags          `json:"tags"`
 	Title       string        `json:"title"`
 }
+
 type EvalMatches struct {
 	Value  int    `json:"value"`
 	Metric string `json:"metric"`
 	Tags   Tags   `json:"tags"`
 }
+
 type Tags struct {
 	TagName string `json:"tag name"`
 }
@@ -73,11 +96,15 @@ func glark(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	//Get environment variabls from AWS Lambda
 	AppID := os.Getenv("app_id")
 	AppSecret := os.Getenv("app_secret")
-	ChatID := os.Getenv("chat_id")
+	ChatName := os.Getenv("chat_name")
 
 	// Payload will be used to take the json Payload from Grafana
-	var payload Payload
-	var larkToken LarkToken
+	var (
+		payload   Payload
+		larkToken LarkToken
+		larkData  LarkData
+		chatID    string
+	)
 
 	client := &http.Client{
 		Timeout: time.Second * 5,
@@ -118,9 +145,41 @@ func glark(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 404}, err
 	}
 
-	// Prepare the message payload
+	bearer := "Bearer " + larkToken.TenantAccessToken // larkToken.AppAccessToken
+
+	//New Request to obtain groups the bot is part of
+	req, err = http.NewRequest("GET", "https://open.larksuite.com/open-apis/chat/v4/list", nil)
+
+	// Add authorization headers
+	req.Header.Add("Authorization", bearer)
+
+	// Send HTTP request to Lark
+	resp, err = client.Do(req)
+	if err != nil {
+		log.Println("Error on response.\n[ERRO] -", err)
+	}
+	defer resp.Body.Close()
+	body, _ = ioutil.ReadAll(resp.Body)
+	log.Println(string([]byte(body)))
+
+	// Unmarshal the JSON to store the LarkToken
+	err = json.Unmarshal([]byte(body), &larkData)
+	if err != nil {
+		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 404}, err
+	}
+
+	var groupSlice []Groups
+	//Need to search "chat_id" in LarkData for the ChatID supplied by env
+	for i := range groupSlice {
+		if groupSlice[i].Name == ChatName {
+			//Group found
+			chatID = larkData.Data.Groups[i].ChatID
+		}
+	}
+
+	// Then we prepare the message payload
 	reqPayload := LarkMessageRequest{
-		ChatID:  ChatID,
+		ChatID:  chatID,
 		MsgType: "text",
 		Content: Content{
 			Text: payload.Message + payload.EvalMatches[0].Metric,
@@ -132,9 +191,6 @@ func glark(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 404}, err
 
 	}
-
-	// Create a Bearer string by appending respective access token
-	var bearer = "Bearer " + larkToken.TenantAccessToken // larkToken.AppAccessToken
 
 	// Create a new Lark request
 	req, err = http.NewRequest("POST", "https://open.larksuite.com/open-apis/message/v4/send/", bytes.NewBuffer(bytesRepresentation))
