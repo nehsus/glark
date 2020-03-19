@@ -123,7 +123,7 @@ func glark(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 		ChatID:  ChatID,
 		MsgType: "text",
 		Content: Content{
-			Text: payload.Message,
+			Text: payload.Message + payload.EvalMatches[0].Metric,
 		},
 	}
 
