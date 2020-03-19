@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nehsus/glark.svg?branch=master)](https://travis-ci.org/nehsus/glark)
+<br />
 # Glark
 Glark is an alertManager for Grafana with Lark, written in Go
 
