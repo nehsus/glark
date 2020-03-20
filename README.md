@@ -61,10 +61,11 @@ Request example:
 ```
 
 ## Pending Features
-This project is currently under construction. Issues presently being worked on:
- 
- * Only one bot and chat-group is implemented
- * You will need to obtain the chat_id of the group by this [method](https://open.larksuite.com/document/uMzMyEjLzMjMx4yMzITM/uETM1EjLxETNx4SMxUTM) (Currently under const.)
+This project is currently under construction. Issues presently being worked on: \
+~~You will need to obtain the chat_id of the group by this [method](https://open.larksuite.com/document/uMzMyEjLzMjMx4yMzITM/uETM1EjLxETNx4SMxUTM)~~
+
+ * [ ] Multiple chat bots and groups to be implemented
+ * [x] Get chat_id of the group by chat-name specified in lambda env.
 
 ## Contributing
 This package was developed in my free time. Contributions from everone are welcome to make this a more wholesome and streamlined experience. If you find any bugs or think there should be a particular feature included, feel free to open up a new issue or pull request.
