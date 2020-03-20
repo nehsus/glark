@@ -33,18 +33,21 @@ type LarkToken struct {
 	TenantAccessToken string `json:"tenant_access_token"`
 }
 
+// LarkData is a struct to store group information for Lark's Bot
 type LarkData struct {
 	Code int    `json:"code"`
 	Data Data   `json:"data"`
 	Msg  string `json:"msg"`
 }
 
+// Supporting struct used to store group details
 type Data struct {
 	Groups    []Groups `json:"groups"`
 	HasMore   bool     `json:"has_more"`
 	PageToken string   `json:"page_token"`
 }
 
+// Supporting struct used to store group details
 type Groups struct {
 	Avatar      string `json:"avatar"`
 	ChatID      string `json:"chat_id"`
@@ -70,22 +73,26 @@ type Payload struct {
 	Title       string        `json:"title"`
 }
 
+// Supporting struct used to store metrics, tags and values from Grafana
 type EvalMatches struct {
 	Value  int    `json:"value"`
 	Metric string `json:"metric"`
 	Tags   Tags   `json:"tags"`
 }
 
+// Supporting struct used to store grafana tags
 type Tags struct {
 	TagName string `json:"tag name"`
 }
 
-//LarkMessageRequest is a struct to store the body for Lark message
+// LarkMessageRequest is a struct to store the body for a Lark message
 type LarkMessageRequest struct {
 	MsgType string  `json:"msg_type"`
 	ChatID  string  `json:"chat_id"`
 	Content Content `json:"content"`
 }
+
+// Supporting struct to store message content
 type Content struct {
 	Text string `json:"text"`
 }
@@ -168,10 +175,9 @@ func glark(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 404}, err
 	}
 
-	var groupSlice []Groups
-	//Need to search "chat_id" in LarkData for the ChatID supplied by env
-	for i := range groupSlice {
-		if groupSlice[i].Name == ChatName {
+	//We need to search for "chat_id" corresponding to the ChatID supplied by env
+	for i := range larkData.Data.Groups {
+		if larkData.Data.Groups[i].Name == ChatName {
 			//Group found
 			chatID = larkData.Data.Groups[i].ChatID
 		}
@@ -212,7 +218,7 @@ func glark(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	}
 
 	// Returning response with Lambda Proxy Response
-	return events.APIGatewayProxyResponse{Body: "Done", StatusCode: 200}, nil
+	return events.APIGatewayProxyResponse{Body: "Alert sent.", StatusCode: 200}, nil
 }
 
 func main() {
