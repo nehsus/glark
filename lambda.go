@@ -10,6 +10,7 @@ import (
 )
 
 func handleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	fmt.Printf("%v\n", request)
 	appDetails := AppDetails{
 		AppID:     appID,
 		AppSecret: appSecret,

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -26,5 +27,7 @@ func init() {
 }
 
 func main() {
+	client := http.Client{}
+	InitLark(&larkRequest{client: &client})
 	lambda.Start(handleRequest)
 }
