@@ -11,11 +11,6 @@
   git:
     depth: 1
   
-  # Download and extract the golangci-lint binary.
-  before_script:
-    - "curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $GOPATH/bin v1.23.1"
-  
   # Configure golangci-lint with a .golangci.yml
   script: 
-    - "golangci-lint run" # Run linters in parallel.
-    - "go test -v -race"  # Run tests with the race detector.
+    - "go test -v -race ./..."  # Run tests with the race detector.
