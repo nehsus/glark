@@ -11,6 +11,10 @@
   git:
     depth: 1
   
+  # Run during install stage.
+  install:
+    - "go build"
+
   # Configure golangci-lint with a .golangci.yml
   script: 
-    - "go test -v -race ./..."  # Run tests with the race detector.
+    - "go test -v"  # Run tests with the race detector.
