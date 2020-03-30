@@ -107,7 +107,7 @@ func (l *LarkSuite) TestSendMessage() {
 		ChatID:  testChatID,
 		MsgType: "text",
 		Content: Content{
-			Text: "This is test text from test bot!!",
+			Text: "Travis: A commit has just been made on Glark",
 		},
 	}
 	statusCode := l.lark.SendMessage(token.TenantAccessToken, larkMessageRequest)
